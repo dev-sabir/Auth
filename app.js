@@ -38,7 +38,6 @@ app.patch('/api/change-password', authToken, (req, res) => {
     const userData = Users[arrIndex];
     userData.password = req.body.password;
     userData.LoggedInArray = [null];
-    console.log(userData)
     userData.LoggedInArray.push({"UserBrowser":"Unknown","accessToken":req.token})
     res.status(200).json({message:"Password Changed successfully!"})
 })
@@ -85,8 +84,12 @@ app.post('/api/login', (req, res) => {
     res.status(200).json({ accessToken, LoggedInArray })
 
 })
-app.delete('/api/logout', (req, res) => {
-
+app.delete('/api/logout',authToken, (req, res) => {
+    //to delete the last logged in browser
+    const arrIndex = UserMap.get(req.user.name);
+    const userData = Users[arrIndex];
+    const BrowserIndex = userData.LoggedInArray.length-1;
+    userData.LoggedInArray[BrowserIndex] = null;
 })
 
 function authToken(req, res, next) {
